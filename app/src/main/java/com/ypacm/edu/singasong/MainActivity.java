@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private class RecordAudioTask extends AsyncTask<Void, double[], Void> {
-
         @Override
         protected Void doInBackground(Void... params) {
             try {
@@ -85,9 +84,10 @@ public class MainActivity extends AppCompatActivity {
 
                 while (startFlag) {
                     int result = audioRecord.read(audioBuffer, 0, BLOCK_SIZE);
-
+                    //audioBuffer为mic采集音频信号，复习数字信号处理，写出自己的FFT
                     for (int i = 0; i < BLOCK_SIZE && i < result; i++) {
                         toTrans[i] = (double) audioBuffer[i] / Short.MAX_VALUE;
+                        //采集到的音频为short类型，除以short的最大值，为画图做准备
                     }
                     fftTrans.ft(toTrans);
                     publishProgress(toTrans);
@@ -101,12 +101,12 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onProgressUpdate(double[]... values) {
-
             canvas.drawColor(Color.BLACK);
             for (int i = 0; i < values[0].length; i++) {
                 int x ;
-                x = (int) ( width /(i+1));
+                x =  width /(i+1);
                 int downy = (int) (height/4 - (values[0][i] * 10));
+                //频率为 i*frequency/BLOCK_SIZE
                 int upy = height/4;
 
                 canvas.drawLine(x, downy, x, upy, paint);
