@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     static final int frequency = 44100;
     static final int channelConfig = AudioFormat.CHANNEL_IN_MONO;
     static final int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
-    static final int BLOCK_SIZE = 256;
+    static final int BLOCK_SIZE = 1<<10;//分辨率约为4Hz，且计算较快
     RealDoubleFFT fftTrans;
     Button startStopButton;
     boolean startFlag = false;
@@ -89,8 +89,9 @@ public class MainActivity extends AppCompatActivity {
                         toTrans[i] = (double) audioBuffer[i] / Short.MAX_VALUE;
                         //采集到的音频为short类型，除以short的最大值，为画图做准备
                     }
+                    //publishProgress(toTrans);
                     fftTrans.ft(toTrans);
-                    publishProgress(toTrans);
+                   publishProgress(toTrans);
                 }
                 audioRecord.stop();
             } catch (Throwable t) {
@@ -104,8 +105,8 @@ public class MainActivity extends AppCompatActivity {
             canvas.drawColor(Color.BLACK);
             for (int i = 0; i < values[0].length; i++) {
                 int x ;
-                x =  width /(i+1);
-                int downy = (int) (height/4 - (values[0][i] * 10));
+                x =  width /values[0].length *(i+1);
+                int downy = (int) (height/4 - (values[0][i] * 500));
                 //频率为 i*frequency/BLOCK_SIZE
                 int upy = height/4;
 
@@ -130,6 +131,4 @@ public class MainActivity extends AppCompatActivity {
         startFlag = !startFlag;
 
     }
-
-
 }
